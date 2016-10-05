@@ -17,7 +17,7 @@ if [ $? = 1 ] || [ ! -z "$1" ]; then
 		sudo apt-get update
 		sudo apt-get install apt-transport-https ca-certificates
 		sudo apt-get install linux-image-extra-$(uname -r) linux-image-extra-virtual
-		sudo echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" > /etc/apt/sources.list.d/docker.list
+		echo 'deb https://apt.dockerproject.org/repo ubuntu-xenial main' | sudo tee --append /etc/apt/sources.list.d/docker.list
 		sudo apt-get update
 		sudo apt-get purge lxc-docker
 		apt-cache policy docker-engine
