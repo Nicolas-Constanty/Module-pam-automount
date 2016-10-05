@@ -16,4 +16,6 @@ RUN (apt-get update && apt-get upgrade -y -q && apt-get dist-upgrade -y -q && ap
 RUN apt-get install -y -q openssl
 RUN useradd -m -d /home/toto  -s /bin/bash -p $(echo toto | openssl passwd -1 -stdin) toto
 RUN useradd -m -d /home/titi  -s /bin/bash -p $(echo titi | openssl passwd -1 -stdin) titi
+RUN echo "session required			pam_test.so" >> /etc/pam.d/common-session
+RUN (cd && echo "ln -s /media/pam_modules/pam_test.so /lib/x86_64-linux-gnu/security/pam_test.so" >> .bashrc)
 
