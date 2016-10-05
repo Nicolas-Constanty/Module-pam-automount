@@ -1,1 +1,2 @@
-./PamDebian/run.sh
+cd PamDebian
+./run.sh
