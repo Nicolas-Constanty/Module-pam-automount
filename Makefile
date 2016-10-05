@@ -1,6 +1,6 @@
-PATH_LIB	=	./PamDebian/pam_modules/
+PATH_LIB	=	./PamDebian/pam_modules
 
-NAME		=	$(PATH_LIB)pam_test.so
+NAME		=	$(PATH_LIB)/pam_test.so
 
 CC		=	gcc
 
@@ -17,6 +17,7 @@ CFLAGS		=	-fPIC -DPIC -shared -rdynamic
 #LDFLAGS		= \
 
 $(NAME):	$(OBJS)
+	mkdir -p $(PATH_LIB)
 	$(CC) $(CFLAGS) -o $(NAME) $(SRCS) #$(LDFLAGS)
 
 all:	$(NAME)
