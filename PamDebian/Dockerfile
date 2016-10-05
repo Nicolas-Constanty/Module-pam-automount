@@ -12,10 +12,20 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN echo "deb http://httpredir.debian.org/debian jessie main contrib non-free\ndeb-src http://httpredir.debian.org/debian jessie main contrib non-free\ndeb http://httpredir.debian.org/debian jessie-updates main contrib non-free\ndeb-src http://httpredir.debian.org/debian jessie-updates main contrib non-free\ndeb http://security.debian.org/ jessie/updates main contrib non-free\ndeb-src http://security.debian.org/ jessie/updates main contrib non-free" > /etc/apt/sources.list
 RUN (apt-get update && apt-get upgrade -y -q && apt-get dist-upgrade -y -q && apt-get -y -q autoclean && apt-get -y -q autoremove)
 
+RUN apt-get install -y -q openssl cryptsetup
 
-RUN apt-get install -y -q openssl
-RUN useradd -m -d /home/toto  -s /bin/bash -p $(echo toto | openssl passwd -1 -stdin) toto
-RUN useradd -m -d /home/titi  -s /bin/bash -p $(echo titi | openssl passwd -1 -stdin) titi
+ENV toto /home/toto
+ENV titi /home/titi
+ENV crypt /dev/zero
+#ENV crypt /dev/urandom
+#ENV crypt /dev/random
+
+RUN useradd -m -d ${toto} -s /bin/bash -p $(echo toto | openssl passwd -1 -stdin) toto
+RUN useradd -m -d ${titi} -s /bin/bash -p $(echo titi | openssl passwd -1 -stdin) titi
+
 RUN echo "session required			pam_test.so" >> /etc/pam.d/common-session
 RUN (cd && echo "ln -s /media/pam_modules/pam_test.so /lib/x86_64-linux-gnu/security/pam_test.so" >> .bashrc)
+RUN (dd if=${crypt} of=${toto}/crypt_toto bs=1M count=256 && dd if=${crypt} of=${titi}/crypt_titi bs=1M count=256)
+RUN (echo -n "toto" | cryptsetup -y luksFormat ${toto}/crypt_toto - && echo -n "titi" | cryptsetup -y luksFormat ${titi}/crypt_titi -)
 
+RUN (chown toto:toto ${toto}/crypt_toto && chown titi:titi ${titi}/crypt_titi)
