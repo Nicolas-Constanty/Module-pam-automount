@@ -1,1 +1,0 @@
-gcc -fPIC -DPIC -shared -rdynamic -o ./PamDebian/pam_modules/pam_test.so src/test_coucou.c
