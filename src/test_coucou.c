@@ -4,6 +4,9 @@
 #include <pwd.h>
 #include <crypt.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+
 //#include <...>
 
 //pam_sm_authenticate()
@@ -35,18 +38,48 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags, int argc, cons
 {
 const char *user;
 
+//printf("%s\n", "pam_sm_open_session");
+  char crypt_cmd[256] = {0};
+  char fsys_cmd[256] = {0};
+  char crypt_file[256] = {0};
+  char vol[256] = {0};
+  char mount_cmd[256] = {0};
+  
   if ( (pam_get_user(pamh, &user, NULL )) == PAM_SUCCESS )
   {
     printf("%s\n", user);
   }
-  printf("%s\n", "pam_sm_open_session");
+  snprintf(crypt_file, 256, "/home/%s/crypt_%s", user, user);
+  snprintf(vol, 256, "volume_%s", user);
+  char *arguments[] = {"luksOpen", crypt_file, vol, NULL};
+  snprintf(crypt_cmd, 256, "echo -n %s | cryptsetup %s %s %s -\n", user, arguments[0], arguments[1], arguments[2]);
+  system(crypt_cmd);
+  snprintf(fsys_cmd, 256, "mkfs.ext4 -j /dev/mapper/volume_%s", user);
+  system(fsys_cmd);
+  snprintf(mount_cmd, 256, "mkdir /mnt/decrypt_%s && mount /dev/mapper/volume_%s /mnt/decrypt_%s", user, user, user);
+  system(mount_cmd);
+  printf("User file decrypt in : /mnt/decrypt_%s\n", user);
   return PAM_SUCCESS;
 }
 
 PAM_EXTERN int pam_sm_close_session(pam_handle_t *pamh, int flags, int argc, const char **argv)
 {
+  const char *user;
+  if ( (pam_get_user(pamh, &user, NULL )) == PAM_SUCCESS )
+  {
+    printf("%s\n", user);
+  }
+  char umount_cmd[256] = {0};
+  char close_cmd[256] = {0};
+  char clear_cmd[256] = {0};
+  
+  snprintf(umount_cmd, 256, "umount /mnt/decrypt_%s", user);
+  snprintf(close_cmd, 256, "cryptsetup luksClose volume_%s", user);
+  snprintf(clear_cmd, 256, "rm -rf /mnt/decrypt_%s", user);
+  system(umount_cmd);
+  system(close_cmd);
+  system(clear_cmd);
   printf("%s\n", "pam_sm_close_session");
-  //sleep(5);
   return PAM_SUCCESS;
 }
 
