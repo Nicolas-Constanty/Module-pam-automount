@@ -12,7 +12,7 @@ OBJS		=	$(SRCS:.cpp=.o)
 
 CPPFLAGS	=	-fPIC -DPIC -shared -rdynamic
 
-#CFLAGS		+=	-W -Wall -Wextra
+#CPPFLAGS		+=	-W -Wall -Wextra
 
 #LDFLAGS		= \
 
