@@ -6,7 +6,7 @@ CC		=	g++
 
 RM		=	rm -f
 
-SRCS		=	src/test_coucou.cpp \
+SRCS		=	src/pam_automount.cpp \
 
 OBJS		=	$(SRCS:.cpp=.o)
 

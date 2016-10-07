@@ -53,7 +53,7 @@ extern "C" {
 
     if ( (pam_get_user(pamh, &c_user, NULL )) == PAM_SUCCESS )
     {
-      printf("USER=%s!\n", user.c_str());
+      printf("USER=%s!\n", c_user);
     }
     user = c_user;
     crypt_file = "/home/" + user + "/crypt_" + user;
@@ -69,21 +69,23 @@ extern "C" {
 
   PAM_EXTERN int pam_sm_close_session(pam_handle_t *pamh, int flags, int argc, const char **argv)
   {
-    const char *user;
-    char umount_cmd[256] = {0};
-    char close_cmd[256] = {0};
-    char clear_cmd[256] = {0};
+    const char *c_user;
+    std::string umount_cmd;
+    std::string close_cmd;
+    std::string clear_cmd;
+    std::string user;
 
-    if ( (pam_get_user(pamh, &user, NULL )) == PAM_SUCCESS )
+    if ( (pam_get_user(pamh, &c_user, NULL )) == PAM_SUCCESS )
     {
-      printf("%s\n", user);
+      printf("%s\n", c_user);
     }
-    snprintf(umount_cmd, 256, "umount /mnt/decrypt_%s", user);
-    snprintf(close_cmd, 256, "cryptsetup luksClose volume_%s", user);
-    snprintf(clear_cmd, 256, "rm -rf /mnt/decrypt_%s", user);
-    system(umount_cmd);
-    system(close_cmd);
-    system(clear_cmd);
+    user = c_user;
+    umount_cmd = "umount /mnt/decrypt_" + user;
+    close_cmd = "cryptsetup luksClose volume_" + user;
+    clear_cmd = "rm -rf /mnt/decrypt_" + user;
+    system(umount_cmd.c_str());
+    system(close_cmd.c_str());
+    system(clear_cmd.c_str());
     printf("%s\n", "pam_sm_close_session");
     return PAM_SUCCESS;
   }
