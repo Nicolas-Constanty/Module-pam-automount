@@ -10,7 +10,7 @@ ParserHttp::ParserHttp(ProducterStream &ps) : ConsumerParser(ps)
 {}
 
 //Http ::= Header '\n' Body;
-bool ParserHttp::readHttp(std::map<std::string,std::string>& content)
+bool ParserHttp::parse(std::map<std::string,std::string>& content)
 {
     return (readHeader(content) && readChar('\n') && readBody());
 }

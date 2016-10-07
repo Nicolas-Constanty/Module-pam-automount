@@ -5,16 +5,17 @@
 #ifndef PARSERHTTP_H
 #define PARSERHTTP_H
 
+#include "AParser.hpp"
 #include "ConsumerParser.hpp"
 
-class ParserHttp : public ConsumerParser
+class ParserHttp : public ConsumerParser, public AParser
 {
 public:
     ParserHttp(ProducterStream &);
-    bool readHttp(std::map<std::string, std::string> &);
+    virtual bool parse(std::map<std::string,std::string>& content);
 private:
     std::string     _tmp_data;
-    
+
     bool readVersion();
 
     bool readCMD();

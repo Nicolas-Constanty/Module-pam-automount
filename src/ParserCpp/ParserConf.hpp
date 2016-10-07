@@ -2,8 +2,8 @@
 // Created by consta_n on 9/19/16.
 //
 
-#ifndef PARSERHTTP_H
-#define PARSERHTTP_H
+#ifndef PARSERCONF_H
+#define PARSERCONF_H
 #include "AParser.hpp"
 #include "ConsumerParser.hpp"
 
@@ -20,4 +20,4 @@ public:
 };
 
 
-#endif //PARSERHTTP_H
+#endif //PARSERCONF_H

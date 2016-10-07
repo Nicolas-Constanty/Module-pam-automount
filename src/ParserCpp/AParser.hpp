@@ -7,6 +7,7 @@ class AParser
 {
   public:
     virtual bool parse(std::map<std::string,std::string>& content) = 0;
+    virtual ~AParser() {};
   protected:
     std::string     _tmp_data;
 };
