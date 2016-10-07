@@ -2,15 +2,15 @@ PATH_LIB	=	./PamDebian/pam_modules
 
 NAME		=	$(PATH_LIB)/pam_test.so
 
-CC		=	gcc
+CC		=	g++
 
 RM		=	rm -f
 
-SRCS		=	src/test_coucou.c \
+SRCS		=	src/test_coucou.cpp \
 
-OBJS		=	$(SRCS:.c=.o)
+OBJS		=	$(SRCS:.cpp=.o)
 
-CFLAGS		=	-fPIC -DPIC -shared -rdynamic
+CPPFLAGS	=	-fPIC -DPIC -shared -rdynamic
 
 #CFLAGS		+=	-W -Wall -Wextra
 
@@ -18,7 +18,7 @@ CFLAGS		=	-fPIC -DPIC -shared -rdynamic
 
 $(NAME):	$(OBJS)
 	mkdir -p $(PATH_LIB)
-	$(CC) $(CFLAGS) -o $(NAME) $(SRCS) #$(LDFLAGS)
+	$(CC) $(CPPFLAGS) -o $(NAME) $(SRCS) #$(LDFLAGS)
 
 all:	$(NAME)
 
