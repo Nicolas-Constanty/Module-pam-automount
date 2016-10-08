@@ -1,6 +1,6 @@
 command -v docker >/dev/null 2>&1
 if [ $? = 1 ] || [ ! -z "$1" ]; then
-	if [ $1 = "fedora" ]; then
+	if [ $1 = "-fedora" ]; then
 		sudo dnf update
 		sudo tee /etc/yum.repos.d/docker.repo <<-'EOF'
 		[dockerrepo]
@@ -13,7 +13,7 @@ if [ $? = 1 ] || [ ! -z "$1" ]; then
 		sudo dnf install docker-engine
 		sudo systemctl enable docker.service
 		sudo systemctl start docker
-	elif [ $1 = "ubuntu" ]; then
+	elif [ $1 = "-ubuntu" ]; then
 		sudo apt-get update
 		sudo apt-get install apt-transport-https ca-certificates
 		sudo apt-get install linux-image-extra-$(uname -r) linux-image-extra-virtual

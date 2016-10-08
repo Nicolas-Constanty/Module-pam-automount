@@ -9,7 +9,7 @@ MAINTAINER Nicolas Constanty "nicolas.constanty@outlook.fr"
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN echo "deb http://httpredir.debian.org/debian jessie main contrib non-free\ndeb-src http://httpredir.debian.org/debian jessie main contrib non-free\ndeb http://httpredir.debian.org/debian jessie-updates main contrib non-free\ndeb-src http://httpredir.debian.org/debian jessie-updates main contrib non-free\ndeb http://security.debian.org/ jessie/updates main contrib non-free\ndeb-src http://security.debian.org/ jessie/updates main contrib non-free" > /etc/apt/sources.list
+RUN echo "deb http://httpredir.debian.org/debian stretch main contrib non-free\ndeb-src http://httpredir.debian.org/debian stretch main contrib non-free\ndeb http://httpredir.debian.org/debian stretch-updates main contrib non-free\ndeb-src http://httpredir.debian.org/debian stretch-updates main contrib non-free\ndeb http://security.debian.org/ stretch/updates main contrib non-free\ndeb-src http://security.debian.org/ stretch/updates main contrib non-free" > /etc/apt/sources.list
 RUN (apt-get update && apt-get upgrade -y -q && apt-get dist-upgrade -y -q && apt-get -y -q autoclean && apt-get -y -q autoremove)
 
 RUN apt-get install -y -q openssl cryptsetup
