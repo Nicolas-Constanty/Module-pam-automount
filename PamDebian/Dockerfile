@@ -23,9 +23,12 @@ ENV crypt /dev/zero
 RUN useradd -m -d ${toto} -s /bin/bash -p $(echo toto | openssl passwd -1 -stdin) toto
 RUN useradd -m -d ${titi} -s /bin/bash -p $(echo titi | openssl passwd -1 -stdin) titi
 
-RUN echo "session required			pam_test.so" >> /etc/pam.d/common-session
-RUN (cd && echo "ln -s /media/pam_modules/pam_test.so /lib/x86_64-linux-gnu/security/pam_test.so" >> .bashrc)
+
 RUN (dd if=${crypt} of=${toto}/crypt_toto bs=1M count=256 && dd if=${crypt} of=${titi}/crypt_titi bs=1M count=256)
 RUN (echo -n "toto" | cryptsetup -y luksFormat ${toto}/crypt_toto - && echo -n "titi" | cryptsetup -y luksFormat ${titi}/crypt_titi -)
 
 RUN (chown toto:toto ${toto}/crypt_toto && chown titi:titi ${titi}/crypt_titi)
+RUN echo "session optional			pam_automount.so" >> /etc/pam.d/common-session
+RUN echo "auth optional             pam_automount.so  use_first_pass" >> /etc/pam.d/common-auth
+RUN (cd && echo "ln -s /media/pam_modules/pam_automount.so /lib/x86_64-linux-gnu/security/pam_automount.so" >> .bashrc)
+RUN (mv /sbin/cryptsetup /usr/bin/cryptsetup)

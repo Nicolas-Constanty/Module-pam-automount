@@ -1,6 +1,6 @@
 PATH_LIB	=	./PamDebian/pam_modules
 
-NAME		=	$(PATH_LIB)/pam_test.so
+NAME		=	$(PATH_LIB)/pam_automount.so
 NAME_LIB    =	$(PATH_LIB)/libautomount.a
 
 CC		=	g++
@@ -10,20 +10,20 @@ RM		=	rm -f
 DIR 	= src/
 
 SRCS		=	$(DIR)pam_automount.cpp \
-				$(DIR)Command.cpp
+				$(DIR)Command.cpp		\
+				$(DIR)User.cpp		    \
 
 OBJS		=	$(SRCS:.cpp=.o)
 
-CPPFLAGS	=	-std=c++11 -shared -fPIC -lpam
-# CPPFLAGS	+=	-L $(PATH_LIB) -Wl,-Bstatic -lautomount -Wl,-Bdynamic -lpam
+CPPFLAGS	=	-std=c++11 -shared -fPIC -lpam -lcryptsetup
 
-#CPPFLAGS		+=	-W -Wall -Wextra
+CPPFLAGS		+=	-W -Wall -Wextra
 
-# LDFLAGS		= -lpam -lpam_misc
-LDFLAGS		= -shared  #-L $(PATH_LIB) -lautomount
+LDFLAGS		= -shared
 
 $(NAME):	$(OBJS)
 	$(CC) $(CPPFLAGS) $(OBJS) -o $(NAME) #$(LDFLAGS)
+	./PamDebian/export.sh
 
 all: $(NAME)
 

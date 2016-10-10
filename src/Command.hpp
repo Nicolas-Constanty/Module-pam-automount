@@ -1,22 +1,64 @@
-#ifndef COMMAND_H
-#define COMMAND_H
+//
+// Created by babiole on 09/10/16.
+//
 
-#include <string>
+#ifndef PAMELA_COMMAND_H
+#define PAMELA_COMMAND_H
+
+#include <cstring>
+#include <stdexcept>
+#include <iostream>
+#include <stdio.h>
+#include <errno.h>
+#include <linux/loop.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <libcryptsetup.h>
+#include <sys/stat.h>
+#include <sys/mount.h>
+#include <pwd.h>
 
 class Command {
+private:
+    struct crypt_device *_cd;
+    struct crypt_active_device _cad;
+    char *_loopname;
+
 public:
-    static int decrypt_file(std::string user);
+    Command();
+    ~Command();
 
-    static int format_partifion(std::string user);
+    // Public loop device function
+public:
+    bool init_loop_device(const std::string &filename);
 
-    static int mount_partition(std::string user);
+    // Public CrypSetup functions
+public:
+    bool init_cryptsetup();
+    bool init_cryptsetup(const std::string &filename);
+    bool luksOpen(const std::string &device_name, const char *password);
+    bool luksClose(const std::string &filename);
 
-    static int umount_partition(std::string user);
+    // Public Mount functions
+public:
+    bool mount_volume(const std::string &source, const std::string &target, const std::string &filesystemtype);
+    bool umount_volume(const std::string &volume);
 
-    static int encrypt_file(std::string user);
+    // Loop device functions
+private:
+    bool create_free_loop_device();
+    bool associate_loop_device(const std::string &filename);
+    bool detach_loop_device();
 
-    static int remove_volume(std::string user);
+    // CryptSetup functions
+private:
+    bool load();
+    bool activate_by_passphrase(const std::string &device_name, const char *password);
+
+    // Util functions
+private:
+    void display_err(const std::string &msg);
 };
 
 
-#endif //COMMAND_H
+#endif //PAMELA_COMMAND_H
