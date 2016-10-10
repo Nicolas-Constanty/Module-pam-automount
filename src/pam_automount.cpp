@@ -12,38 +12,14 @@
 
 #include "Command.hpp"
 #include "User.h"
+#define  UNUSED __attribute__((unused))
 
 extern "C" {
     #include <stdlib.h>
-    #include <pwd.h>
-    #include <sys/types.h>
     #include <security/pam_modules.h>
-    #include <security/pam_appl.h>
-    #include <security/pam_misc.h>
     #include <sys/mman.h>
 
-    PAM_EXTERN int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc,
-       const char **argv)
-    {
-        std::cout << "pam_sm_chauthtok" << std::endl;
-        return PAM_SUCCESS;
-    }
-
-    PAM_EXTERN int pam_sm_setcred(pam_handle_t *pamh, int flags, int argc,
-       const char **argv)
-    {
-        std::cout << "pam_sm_setcred" << std::endl;
-        return PAM_SUCCESS;
-    }
-
-    PAM_EXTERN int pam_sm_acct_mgmt(pam_handle_t *pamh, int flags,
-       int argc, const char **argv)
-    {
-        std::cout << "pam_sm_acct_mgmt" << std::endl;
-        return PAM_SUCCESS;
-    }
-
-    static void clean_authtok(pam_handle_t *pamh, void *data, int errcode)
+    static void clean_authtok(UNUSED pam_handle_t *pamh, void *data, UNUSED int errcode)
     {
         if (data != NULL)
         {
@@ -84,35 +60,8 @@ extern "C" {
         return (ret);
     }
 
-    static char *get_authok(pam_handle_t *pamh, const char *user)
-    {
-        char *authtok = NULL;
-        int ret;
-
-        ret = pam_get_data(pamh, "pam_automount_authtok",(const void **)&authtok);
-        if (ret == PAM_SUCCESS)
-            return (authtok);
-        else
-        {
-            struct passwd *pe;
-            pe = getpwnam(user);
-            if (pe->pw_passwd)
-                authtok = strdup(pe->pw_name);
-            std::cout << ">" << authtok << "<" << std::endl;
-        }
-        if (authtok != NULL) {
-            ret = pam_set_data(pamh, "pam_automount_authtok", (void *)authtok, clean_authtok);
-            if (ret == PAM_SUCCESS)
-            {
-                if (mlock(authtok, strlen(authtok) + 1) < 0)
-                   std::cout << "Error mlock" << std::endl;
-            }
-        }
-        return (authtok);
-    }
-
-    PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
-       int argc, const char **argv)
+    PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, UNUSED int flags,
+       UNUSED int ac, UNUSED const char **av)
     {
         std::cout << "pam_sm_open_session" << std::endl;
         User *user;
@@ -139,8 +88,8 @@ extern "C" {
         return (PAM_SUCCESS);
     }
 
-    PAM_EXTERN int pam_sm_close_session(pam_handle_t *pamh, int flags,
-       int argc, const char **argv)
+    PAM_EXTERN int pam_sm_close_session(pam_handle_t *pamh, UNUSED int flags,
+       UNUSED int ac, UNUSED const char **av)
     {
         User *user;
         Command cmd = Command();
@@ -195,8 +144,8 @@ extern "C" {
         return PAM_SUCCESS;
     }
 
-    PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flgs,
-       int c, const char **v )
+    PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, UNUSED int flgs,
+       UNUSED int ac, UNUSED const char **av )
     {
         if (save_user(pamh) != PAM_SUCCESS)
             return PAM_AUTH_ERR;
