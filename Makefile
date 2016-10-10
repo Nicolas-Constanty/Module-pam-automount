@@ -23,7 +23,7 @@ LDFLAGS		= -shared
 
 $(NAME):	$(OBJS)
 	$(CC) $(CPPFLAGS) $(OBJS) -o $(NAME) #$(LDFLAGS)
-	./PamDebian/export.sh
+	#./PamDebian/export.sh
 
 all: $(NAME)
 
