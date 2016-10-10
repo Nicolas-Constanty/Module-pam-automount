@@ -2,7 +2,7 @@
 // Created by babiole on 09/10/16.
 //
 
-#include "User.h"
+#include "User.hpp"
 
 User::User(const char *name, const char *password, const char * mount)
         : m_name(name), m_password(password), m_mount_directory(mount)

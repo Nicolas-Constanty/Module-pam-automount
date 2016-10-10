@@ -11,7 +11,7 @@
 #include <iostream>
 
 #include "Command.hpp"
-#include "User.h"
+#include "User.hpp"
 #define  UNUSED __attribute__((unused))
 
 extern "C" {
