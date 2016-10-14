@@ -41,5 +41,3 @@ std::ostream& operator<<(std::ostream& out, const User& user);
 std::ostream& operator<<(std::ostream& out, const User* user);
 
 #endif //PAMELA_USER_H
-
-

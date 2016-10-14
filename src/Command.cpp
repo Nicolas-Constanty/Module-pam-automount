@@ -180,7 +180,6 @@ bool Command::mount_volume(const std::string &source, const std::string &target,
         display_err("mkdir : " + std::string(strerror(errno)));
         return (false);
     }
-    // SI tu trouve comment formater en ext4 depuis du code je prends
     std::string fsys_cmd = "mkfs.ext4 -j " + source;
     if (system(fsys_cmd.c_str()) == -1)
     {

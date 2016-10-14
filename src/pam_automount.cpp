@@ -10,6 +10,10 @@
 //pam_sm_chauthtok()
 #include <iostream>
 
+//TODO changer volume_ par une macro generique
+//TODO verifier mdp different de nom User
+
+
 #include "Command.hpp"
 #include "User.hpp"
 #define  UNUSED __attribute__((unused))
@@ -67,14 +71,21 @@ extern "C" {
         User *user;
         Command cmd = Command();
 
+        user = NULL;
         if (pam_get_data(pamh, "pam_automount_user", (const void **)&user) != PAM_SUCCESS)
         {
             return (PAM_SESSION_ERR);
         }
+        if (user == NULL)
+        {
+          std::cerr << "User not found" << std::endl;
+          return (PAM_SESSION_ERR);
+        }
         std::cout << user << std::endl;
         //cmd.init_loop_device("/home/toto/crypt_" + std::string(user->get_name()));
-        if (!cmd.init_cryptsetup("/home/toto/crypt_" + std::string(user->get_name())))
+        if (!cmd.init_cryptsetup("/home/" +  user->getName() + "/crypt_" + std::string(user->get_name())))
             return (PAM_SESSION_ERR);
+
         std::string vol = "volume_" + std::string(user->get_name());
         if (!cmd.luksOpen(vol, user->get_password()))
             return (PAM_SESSION_ERR);
@@ -94,21 +105,18 @@ extern "C" {
         User *user;
         Command cmd = Command();
 
+        user = NULL;
         std::cout << "pam_sm_close_session" << std::endl;
         if (pam_get_data(pamh, "pam_automount_user", (const void **)&user) != PAM_SUCCESS)
         {
             return (PAM_SESSION_ERR);
         }
         std::cout << "USER" << std::endl;
-        // this section not work
-//        int r;
-//        if ((r = pam_get_data(pamh, "pam_automount_cmd", (const void **)&cmd)) != PAM_SUCCESS)
-//        {
-//            std::cout << r << std::endl;
-//            sleep(5);
-//            return (PAM_SESSION_ERR);
-//        }
-        //
+        if (user == NULL)
+        {
+          std::cerr << "user not found" << std::endl;
+          return (PAM_SESSION_ERR);
+        }
         if (!cmd.umount_volume(user->get_mount_directory()))
         {
             return (PAM_SESSION_ERR);
