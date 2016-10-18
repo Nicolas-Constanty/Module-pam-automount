@@ -14,11 +14,11 @@ private:
     boost::variant<std::string, json_array *> value;
 public:
     JsonVariant();
-    boost::variant<std::string, json_array *> &get_value();
+    boost::variant<std::string, json_array *> &getValue();
     const boost::variant<std::string, json_array *> &get() const;
     json_array *get_array() const;
-    const std::string &operator[](const std::string &key);
-    json_pair operator[](int key);
+    const std::string &operator[](const std::string &key) const;
+    const json_pair &operator[](int key) const;
 };
 
 

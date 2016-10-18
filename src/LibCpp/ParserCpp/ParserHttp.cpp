@@ -63,7 +63,7 @@ bool ParserHttp::readHeaderList(map_parser *content)
         ret = (ret && readData());
         if (!_tmp_data.empty())
             endCapture(_tmp_data,
-                       boost::get<std::string>((*content)[_tmp_data].get_value()));
+                       boost::get<std::string>((*content)[_tmp_data].getValue()));
         _tmp_data.clear();
         return ret;
     }, '+'));

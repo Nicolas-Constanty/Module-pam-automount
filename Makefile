@@ -21,15 +21,17 @@ CPPFLAGS		+=	-W -Wall -Wextra
 LDFLAGS		= -shared
 
 $(NAME):	$(OBJS)
-	$(CC) $(CPPFLAGS) $(OBJS) -o $(NAME) #$(LDFLAGS)
-	#./PamDebian/export.sh
+	$(MAKE) -C $(DIR)LibCpp/ lib
+	$(CC) $(CPPFLAGS) $(OBJS) -L -$(SRC)LibCpp/lparser -o $(NAME)
 
 all: $(NAME)
 
 clean:
+	$(MAKE) -C src/LibCpp/ clean
 	$(RM) $(OBJS)
 
 fclean:	clean
+	$(MAKE) -C src/LibCpp/ fclean
 	$(RM) $(NAME)
 
 re:	fclean all

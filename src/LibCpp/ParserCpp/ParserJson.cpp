@@ -36,12 +36,12 @@ bool ParserJson::save_key(json_map* json_node,  const std::string &context, bool
     if (!context.empty())
     {
         json_array *&a = boost::get<json_array *&>(
-                (*json_node)[context].get_value());
+                (*json_node)[context].getValue());
         if (!a)
             a = new std::vector<json_pair *>();
     }
     else
-        (*json_node)[_tmp_data].get_value() = nullptr;
+        (*json_node)[_tmp_data].getValue() = nullptr;
     return (ret);
 }
 
@@ -54,7 +54,7 @@ bool ParserJson::save_value(json_map* json_node,  const std::string &context, bo
     if (!context.empty())
     {
         json_array *a = boost::get<json_array *>(
-                (*json_node)[context].get_value());
+                (*json_node)[context].getValue());
         if (a)
         {
             if (a->size() <= index)

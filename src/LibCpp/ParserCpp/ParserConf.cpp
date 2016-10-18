@@ -49,13 +49,7 @@ bool ParserConf::readValue(map_parser *content)
     beginCapture(_tmp_data);
     bool ret = ConsumerParser::readValue();
     endCapture(_tmp_data,
-               boost::get<std::string>((*content)[_tmp_data].get_value())
+               boost::get<std::string>((*content)[_tmp_data].getValue())
     );
     return (ret);
-}
-
-//Space ::= [' ' | '\t']*
-bool ParserConf::readSpace()
-{
-  return (repeater([this] () { return (readChar(' ') | readChar('\t'));}, '*'));
 }

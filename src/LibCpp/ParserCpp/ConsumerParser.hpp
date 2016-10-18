@@ -19,25 +19,19 @@ protected:
     bool repeater(const std::function<bool()> &func, char c);
     std::string _ignore;
     char _comment;
-public:
+protected:
     ConsumerParser(ProducterStream &);
-
     bool readText(char *text);
-
     bool readEOF();
-
     bool readUntil(char c);
-
     bool readUntilEOF();
-
     bool readInteger();
-
     //Id := [a .. z] | [A .. Z] | '_' [[a .. z] | [A .. Z] | [0 .. 9] | '_']*
     bool readIdentifier();
-
     //Value := [[a .. z] | [A .. Z] | [0 .. 9] | '_']*
     bool readValue();
 
+protected:
     inline bool beginCapture(std::string tag)
     {
         if (readEOF())

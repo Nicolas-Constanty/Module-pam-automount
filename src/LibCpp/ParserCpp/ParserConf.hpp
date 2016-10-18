@@ -16,7 +16,6 @@ public:
   private:
     bool readValue(map_parser *content);
     bool readKey();
-    bool readSpace();
 };
 
 
