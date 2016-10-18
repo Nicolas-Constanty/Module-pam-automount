@@ -12,7 +12,7 @@ class ParserHttp : public ConsumerParser, public AParser
 {
 public:
     ParserHttp(ProducterStream &);
-    virtual bool parse(std::map<std::string,std::string>& content);
+    virtual bool parse(map_parser *content);
 private:
     std::string     _tmp_data;
 
@@ -28,9 +28,9 @@ private:
 
     bool readBody();
 
-    bool readHeader(std::map<std::string,std::string>& content);
+    bool readHeader(map_parser *content);
 
-    bool readHeaderList(std::map<std::string,std::string>& content);
+    bool readHeaderList(map_parser *content);
 
 };
 

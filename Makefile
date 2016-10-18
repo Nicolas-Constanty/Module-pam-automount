@@ -1,7 +1,6 @@
 PATH_LIB	=	./PamDebian/pam_modules
 
 NAME		=	$(PATH_LIB)/pam_automount.so
-NAME_LIB    =	$(PATH_LIB)/libautomount.a
 
 CC		=	g++
 

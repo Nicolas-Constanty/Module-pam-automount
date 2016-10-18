@@ -78,33 +78,36 @@ public:
         return (_buffer[0] == c);
     }
 
-    inline bool is_ignore()
+    inline void ignore_char(char c)
     {
-      int i = 0;
-      while (_ignore[i]) {
-        if (_buffer[0] == _ignore[i])
-          return (true);
-        ++i;
-      }
-      return (false);
+        int i = 0;
+
+        if (peekChar(c))
+          return;
+        while (_ignore[i]) {
+            if (_buffer[0] == _ignore[i])
+            {
+                _buffer = _buffer.substr(1);
+                if (peekChar(c))
+                    return;
+                i = -1;
+            }
+            ++i;
+        }
     }
 
     inline bool readChar(char c)
     {
         if (_buffer[0] == _comment)
         {
-          _buffer = _buffer.substr(1);
-          std::string tmp = _tag;
-          _tag = "";
-          bool ret = readUntil('\n');
-          _tag = tmp;
-          return (ret);
+            _buffer = _buffer.substr(1);
+            std::string tmp = _tag;
+            _tag = "";
+            bool ret = readUntil('\n');
+            _tag = tmp;
+            return (ret);
         }
-        if (is_ignore())
-        {
-          _buffer = _buffer.substr(1);
-          return (true);
-        }
+        ignore_char(c);
         if (peekChar(c))
         {
             if (!_tag.empty())

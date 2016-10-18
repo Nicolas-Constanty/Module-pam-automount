@@ -1,6 +1,7 @@
 PATH_LIB	=	../../PamDebian/pam_modules
 
-NAME    =	$(PATH_LIB)/libautomount.a
+#NAME    =	$(PATH_LIB)/libautomount.a
+NAME    =	test_parser
 
 CC		=	g++
 
@@ -8,17 +9,19 @@ RM		=	rm -f
 
 DIR 	= ParserCpp/
 
-SRCS		=	Command.cpp \
-				# $(DIR)ConsumerParser.cpp \
-				# $(DIR)Parser.cpp \
-				# $(DIR)ParserConf.cpp \
-				# $(DIR)ParserHttp.cpp \
-				# $(DIR)ConsumerParser.cpp \
-				# $(DIR)ProducterStream.cpp \
+SRCS		=   $(DIR)ConsumerParser.cpp \
+				$(DIR)Parser.cpp \
+				$(DIR)ParserConf.cpp \
+				$(DIR)ParserHttp.cpp \
+				$(DIR)ParserJson.cpp \
+				$(DIR)ProducterStream.cpp \
+				$(DIR)JsonVariant.cpp \
+				$(DIR)JsonException.cpp \
+				$(DIR)main.cpp \
 
 OBJS		=	$(SRCS:.cpp=.o)
 
-CPPFLAGS	=	-std=c++11 -fPIC -lpam
+CPPFLAGS	=	-g -std=c++11
 
 #CPPFLAGS		+=	-W -Wall -Wextra
 
@@ -26,7 +29,7 @@ CPPFLAGS	=	-std=c++11 -fPIC -lpam
 LDFLAGS		= -shared -Wl
 
 $(NAME): $(OBJS)
-	ar rcs $(NAME) $(OBJS)
+	$(CC) $(OBJS) -o $(NAME)
 
 all: $(NAME)
 

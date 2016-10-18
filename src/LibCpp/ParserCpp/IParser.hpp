@@ -2,11 +2,13 @@
 #define IPARSER_H
 
 #include <map>
-
+#include <boost/variant.hpp>
+#include "JsonVariant.hpp"
 class IParser
 {
   public:
-    virtual bool parse(std::map<std::string,std::string>& content) = 0;
+    typedef std::map<std::string, JsonVariant> map_parser;
+    virtual bool parse(map_parser *content) = 0;
 };
 
 

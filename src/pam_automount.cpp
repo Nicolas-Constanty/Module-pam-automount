@@ -9,6 +9,7 @@
 //pam_sm_close_session()
 //pam_sm_chauthtok()
 #include <iostream>
+#include <unistd.h>
 
 //TODO changer volume_ par une macro generique
 //TODO verifier mdp different de nom User
@@ -31,6 +32,18 @@ extern "C" {
             memset(data, 0, len);
             munlock(data, len);
             free(data);
+        }
+    }
+
+    static void clean_user(UNUSED pam_handle_t *pamh, void *data, UNUSED int errcode)
+    {
+        User *user;
+
+        std::cout << "CLEAN" << std::endl;
+        user = (User *)data;
+        if (user)
+        {
+            delete user;
         }
     }
 
@@ -64,6 +77,24 @@ extern "C" {
         return (ret);
     }
 
+    PAM_EXTERN int pam_sm_chauthtok(UNUSED pam_handle_t *pamh, UNUSED int flags, UNUSED int argc, UNUSED const char **argv)
+  {
+      std::cout << "pam_sm_chauthtok" << std::endl;
+    return PAM_SUCCESS;
+  }
+
+  PAM_EXTERN int pam_sm_setcred(UNUSED pam_handle_t *pamh, UNUSED int flags, UNUSED int argc, UNUSED const char **argv)
+  {
+      std::cout << "pam_sm_setcred" << std::endl;
+    return PAM_SUCCESS;
+  }
+
+  PAM_EXTERN int pam_sm_acct_mgmt(UNUSED pam_handle_t *pamh, UNUSED int flags, UNUSED int argc, UNUSED const char **argv)
+  {
+    std::cout << "pam_sm_acct_mgmt" << std::endl;
+    return PAM_SUCCESS;
+  }
+
     PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, UNUSED int flags,
        UNUSED int ac, UNUSED const char **av)
     {
@@ -82,8 +113,11 @@ extern "C" {
           return (PAM_SESSION_ERR);
         }
         std::cout << user << std::endl;
-        //cmd.init_loop_device("/home/toto/crypt_" + std::string(user->get_name()));
-        if (!cmd.init_cryptsetup("/home/" +  user->getName() + "/crypt_" + std::string(user->get_name())))
+        if (std::string(user->get_name()) == "root")
+        {
+            return (PAM_SUCCESS);
+        }
+        if (!cmd.init_cryptsetup("/home/" +  std::string(user->get_name()) + "/crypt_" + std::string(user->get_name())))
             return (PAM_SESSION_ERR);
 
         std::string vol = "volume_" + std::string(user->get_name());
@@ -91,11 +125,6 @@ extern "C" {
             return (PAM_SESSION_ERR);
         if (!cmd.mount_volume("/dev/mapper/" + vol, user->get_mount_directory(), "ext4"))
             return (PAM_SESSION_ERR);
-//        this section not work
-//        if (pam_set_data(pamh, "pam_automount_cmd", (void *)cmd, clean_user) != PAM_SUCCESS)
-//        {
-//            return (PAM_SESSION_ERR);
-//        }
         return (PAM_SUCCESS);
     }
 
@@ -136,7 +165,6 @@ extern "C" {
         char *pass;
 
         pass = NULL;
-        std::cout << "pam_sm_authenticate" << std::endl;
         ret = pam_get_user(pamh, &c_user, NULL);
         if (ret != PAM_SUCCESS)
         {
@@ -145,7 +173,7 @@ extern "C" {
         set_authok(pamh, c_user, &pass);
         std::string mount_dir = "/mnt/decrypt_" + std::string(c_user);
         user = new User(strdup(c_user), strdup(pass), strdup(mount_dir.c_str()));
-        if (pam_set_data(pamh, "pam_automount_user", (void *)user, NULL) != PAM_SUCCESS)
+        if (pam_set_data(pamh, "pam_automount_user", (void *)user, clean_user) != PAM_SUCCESS)
         {
             return PAM_AUTH_ERR;
         }
@@ -155,6 +183,7 @@ extern "C" {
     PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, UNUSED int flgs,
        UNUSED int ac, UNUSED const char **av )
     {
+        std::cout << "pam_sm_authenticate" << std::endl;
         if (save_user(pamh) != PAM_SUCCESS)
             return PAM_AUTH_ERR;
         return PAM_SUCCESS;

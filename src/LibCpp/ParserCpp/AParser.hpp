@@ -3,14 +3,13 @@
 
 #include "IParser.hpp"
 
-class AParser
+class AParser : public IParser
 {
   public:
-    virtual bool parse(std::map<std::string,std::string>& content) = 0;
+    virtual bool parse(map_parser *content) = 0;
     virtual ~AParser() {};
   protected:
     std::string     _tmp_data;
 };
-
 
 #endif //APARSER_H

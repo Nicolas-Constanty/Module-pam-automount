@@ -127,12 +127,12 @@ bool ConsumerParser::readInteger()
 bool ConsumerParser::readValue()
 {
    bool ret = false;
-   if (readRange('0', '9') || readRange('a', 'z') || readRange('A', 'Z') || readChar('_'))
+   if (readRange('0', '9') || readRange('a', 'z') || readRange('A', 'Z') || readChar('_')  || readChar('/'))
    {
        ret = true;
        while (!readEOF())
        {
-           if (!readRange('0', '9') && !readRange('a', 'z') && !readRange('A', 'Z') && !readChar('_'))
+           if (!readRange('0', '9') && !readRange('a', 'z') && !readRange('A', 'Z') && !readChar('_') && !readChar('/'))
                return (ret);
        }
    }

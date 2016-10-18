@@ -10,17 +10,17 @@ ParserHttp::ParserHttp(ProducterStream &ps) : ConsumerParser(ps)
 {}
 
 //Http ::= Header '\n' Body;
-bool ParserHttp::parse(std::map<std::string,std::string>& content)
+bool ParserHttp::parse(map_parser *content)
 {
     return (readHeader(content) && readChar('\n') && readBody());
 }
 
 //Header ::=  CMD ' ' URI ' ' VERSION '\n' [HeaderList #flush ]*;
-bool ParserHttp::readHeader(std::map<std::string,std::string>& content)
+bool ParserHttp::readHeader(map_parser *content)
 {
     //bool ret = readCMD();
     //std::cout << std::boolalpha << ret << std::endl;
-    return (readCMD() && readChar(' ') && readURI() && readChar(' ') && readVersion() && readChar('\n') && repeater([&content, this] () { return (readHeaderList(content));}, '*'));
+    return (readCMD() && readChar(' ') && readURI() && readChar(' ') && readVersion() && readChar('\n') && repeater([content, this] () { return (readHeaderList(content));}, '*'));
 }
 
 //CMD ::= «GET» | «POST» ;
@@ -54,15 +54,16 @@ bool ParserHttp::readVersion()
 }
 
 //HeaderList ::= HeaderName ':' data;
-bool ParserHttp::readHeaderList(std::map<std::string,std::string>& content)
+bool ParserHttp::readHeaderList(map_parser *content)
 {
-    return (repeater([this, &content] () {
+    return (repeater([this, content] () {
         bool ret = readHeaderName() && readChar(':');
         if (ret && !_tmp_data.empty())
             beginCapture(_tmp_data);
         ret = (ret && readData());
         if (!_tmp_data.empty())
-            endCapture(_tmp_data, content[_tmp_data]);
+            endCapture(_tmp_data,
+                       boost::get<std::string>((*content)[_tmp_data].get_value()));
         _tmp_data.clear();
         return ret;
     }, '+'));
@@ -73,7 +74,11 @@ bool ParserHttp::readHeaderName()
 {
     bool ret;
     beginCapture("Name");
-    ret = repeater([this] () { return (readChar('-') || readRange('a', 'z') || readRange('A', 'Z')); }, '+');
+    ret = repeater([this] () {
+        return (readChar('-') ||
+                readRange('a', 'z') ||
+                readRange('A', 'Z'));
+    }, '+');
     endCapture("Name", _tmp_data);
     return (ret);
 }

@@ -5,10 +5,11 @@
 #include "AParser.hpp"
 #include "ParserConf.hpp"
 #include "ParserHttp.hpp"
+#include "ParserJson.hpp"
 
 #define  CONF 0
 #define  HTTP 1
-
+#define  JSON 2
 
 
 class Parser : public IParser {
@@ -23,7 +24,8 @@ public:
 
     void init_Conf();
     void init_Http();
-    virtual bool parse(std::map<std::string,std::string>& content);
+    void init_Json();
+    virtual bool parse(map_parser *content);
 };
 
 

@@ -6,13 +6,10 @@ int main(int ac, char **av)
     if (ac > 1)
     {
         Parser parser = Parser(CONF, av[1]);
-        std::map<std::string, std::string> map;
+        IParser::map_parser *map = new IParser::map_parser();
         if (parser.parse(map))
         {
-            for (std::pair<const std::string, std::string> &i : map)
-            {
-                std::cout << i.first << " = " << i.second << std::endl;
-            }
+            std::cout << map << std::endl;
         }
         else
             std::cout << "Fail" << std::endl;

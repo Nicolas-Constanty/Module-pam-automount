@@ -11,11 +11,11 @@ class ParserConf : public ConsumerParser, public AParser
 {
 public:
     ParserConf(ProducterStream &);
-    virtual bool parse(std::map<std::string,std::string>& content);
+    virtual bool parse(map_parser *content);
 
   private:
-    bool readValue(std::map<std::string,std::string>& content);
-    bool readKey(std::map<std::string,std::string>& content);
+    bool readValue(map_parser *content);
+    bool readKey();
     bool readSpace();
 };
 
