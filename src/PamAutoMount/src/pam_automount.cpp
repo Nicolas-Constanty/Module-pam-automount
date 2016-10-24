@@ -108,14 +108,13 @@ extern "C" {
 
     PAM_EXTERN int pam_open_volume(User *user, Command &cmd, const std::string &path, const std::string &pass)
     {
-        if (!cmd.init_cryptsetup(path))
+        if (!cmd.init_cryptsetup("/home/" + path))
             return (PAM_SESSION_ERR);
         std::string np = path;
-        np.substr(5, 6 + user->get_name().size());
         std::replace(np.begin(), np.end(), '/', '_');
-        if (!cmd.luksOpen("volume" + np, pass))
+        if (!cmd.luksOpen("volume_" + np, pass))
             return (PAM_SESSION_ERR);
-        if (!cmd.mount_volume("/dev/mapper/volume" + np, "/mnt/decrypt" + np, "ext4"))
+        if (!cmd.mount_volume("/dev/mapper/volume_" + np, "/mnt/decrypt_" + np, "ext4"))
             return (PAM_SESSION_ERR);
         return (PAM_SUCCESS);
     }
@@ -185,11 +184,8 @@ extern "C" {
         if (pconf == NULL)
         {
             std::cout << "Config NULL" << std::endl;
-            std::string path = "crypt_" + user->get_name();
-            ret = pam_open_volume(user,
-                                  cmd,
-                                  "/home/" +  user->get_name() + "/" + path,
-                                  user->get_password());
+            std::string path = user->get_name() + "/crypt_" + user->get_name();
+            ret = pam_open_volume(user, cmd, path, user->get_password());
         }
         else
         {
