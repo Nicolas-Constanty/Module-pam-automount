@@ -117,7 +117,7 @@ extern "C" {
         std::string np = path;
         np.substr(0, 6 + strlen(user->get_name()));
         std::replace(np.begin(), np.end(), '/', '_');
-        if (!cmd.luksOpen("/dev/mapper/volume" + np, pass))
+        if (!cmd.luksOpen("volume" + np, pass))
             return (PAM_SESSION_ERR);
         if (!cmd.mount_volume("/dev/mapper/volume" + np, "/mnt/decrypt" + np, "ext4"))
             return (PAM_SESSION_ERR);
