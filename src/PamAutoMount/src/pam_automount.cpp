@@ -106,16 +106,24 @@ extern "C" {
         return PAM_SUCCESS;
     }
 
-    PAM_EXTERN int pam_open_volume(User *user, Command &cmd, const std::string &path, const std::string &pass)
+    inline bool file_exist (const std::string& name) {
+        struct stat buffer;
+        return (stat (name.c_str(), &buffer) == 0);
+    }
+
+    PAM_EXTERN int pam_open_volume(Command &cmd, const std::string &path, const std::string &pass)
     {
-        if (!cmd.init_cryptsetup("/home/" + path))
-            return (PAM_SESSION_ERR);
-        std::string np = path;
-        std::replace(np.begin(), np.end(), '/', '_');
-        if (!cmd.luksOpen("volume_" + np, pass))
-            return (PAM_SESSION_ERR);
-        if (!cmd.mount_volume("/dev/mapper/volume_" + np, "/mnt/decrypt_" + np, "ext4"))
-            return (PAM_SESSION_ERR);
+        if (file_exist("/home/" + path))
+        {
+            if (!cmd.init_cryptsetup("/home/" + path))
+                return (PAM_SESSION_ERR);
+            std::string np = path;
+            std::replace(np.begin(), np.end(), '/', '_');
+            if (!cmd.luksOpen("volume_" + np, pass))
+                return (PAM_SESSION_ERR);
+            if (!cmd.mount_volume("/dev/mapper/volume_" + np, "/mnt/decrypt_" + np, "ext4"))
+                return (PAM_SESSION_ERR);
+        }
         return (PAM_SUCCESS);
     }
 
@@ -132,15 +140,20 @@ extern "C" {
                     for (unsigned long k = 0; k < node.size(); ++k) {
                         if (node[k].find("filename") != node[k].end())
                         {
-                            if (node[k].find("keyfile") != node[k].end())
+                            if (file_exist(node[k]["filename"]()))
                             {
-                                if (pam_open_volume(user, cmd, node[k]["filename"](), node[k]["keyfile"]()))
-                                    ret = PAM_SUCCESS;
-                            }
-                            else
-                            {
-                                if (pam_open_volume(user, cmd, node[k]["filename"](), user->get_password()))
-                                    ret = PAM_SUCCESS;
+                                std::string path = node[k]["filename"]();
+                                path.erase(0, 7 + user->get_name().size());
+                                if (node[k].find("keyfile") != node[k].end())
+                                {
+                                    if (pam_open_volume(cmd, path, node[k]["keyfile"]()))
+                                        ret = PAM_SUCCESS;
+                                }
+                                else
+                                {
+                                    if (pam_open_volume(cmd, path, user->get_password()))
+                                        ret = PAM_SUCCESS;
+                                }
                             }
                         }
                     }
@@ -181,23 +194,61 @@ extern "C" {
             std::cerr << "Config not found" << std::endl;
             return (PAM_SESSION_ERR);
         }
-        if (pconf == NULL)
-        {
-            std::cout << "Config NULL" << std::endl;
-            std::string path = user->get_name() + "/crypt_" + user->get_name();
-            ret = pam_open_volume(user, cmd, path, user->get_password());
-        }
+        if (!pconf)
+            ret = pam_open_volume(cmd, user->get_name() + "/crypt_" + user->get_name(), user->get_password());
         else
-        {
-            std::cout << "Config" << std::endl;
             ret = pam_open_config(user, cmd, *pconf);
-        }
         return (ret);
+    }
+
+    PAM_EXTERN int pam_close_volume(Command &cmd, const std::string &path)
+    {
+        ;
+        if (!cmd.umount_volume("/mnt/decrypt_" +  path))
+        {
+            return (PAM_SESSION_ERR);
+        }
+        if (!cmd.luksClose("volume_" + path))
+        {
+            return (PAM_SESSION_ERR);
+        }
+        return (PAM_SUCCESS);
+    }
+
+    PAM_EXTERN int pam_close_multiple_volume(User *user, Command &cmd, JsonVariant::json_pair &conf)
+    {
+        int ret;
+
+        ret = PAM_SESSION_ERR;
+        try {
+            for (unsigned long j = 0; j < conf["conf"].size(); ++j) {
+                if (conf["conf"][j].find(user->get_name()) != conf["conf"][j].end())
+                {
+                    const JsonVariant &node = conf["conf"][j][user->get_name()];
+                    for (unsigned long k = 0; k < node.size(); ++k) {
+                        if (node[k].find("filename") != node[k].end())
+                        {
+                            std::string path = node[k]["filename"]();
+                            path.erase(0, 7 + user->get_name().size());
+                            if (pam_close_volume(cmd, path))
+                                ret = PAM_SUCCESS;
+                        }
+                    }
+                }
+            }
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Invalid json" << std::endl;
+            return (PAM_SESSION_ERR);
+        }
+        return ret;
     }
 
     PAM_EXTERN int pam_sm_close_session(pam_handle_t *pamh, UNUSED int flags,
                                         UNUSED int ac, UNUSED const char **av)
     {
+        int ret;
         User *user;
         Command cmd = Command();
         JsonVariant::json_pair *pconf;
@@ -214,24 +265,18 @@ extern "C" {
             std::cerr << "user not found" << std::endl;
             return (PAM_SESSION_ERR);
         }
+        if (user->get_name() == "root")
+            return (PAM_SUCCESS);
         if (pam_get_data(pamh, "pam_automount_config", (const void **)&pconf) != PAM_SUCCESS)
         {
             std::cerr << "Config not found" << std::endl;
             return (PAM_SESSION_ERR);
         }
-        if (pconf == NULL)
-        {
-            std::string path = user->get_name() + "_crypt_" + user->get_name();
-            if (!cmd.umount_volume("/mnt/decrypt_" +  path))
-            {
-                return (PAM_SESSION_ERR);
-            }
-            if (!cmd.luksClose("volume_" + path))
-            {
-                return (PAM_SESSION_ERR);
-            }
-        }
-        return (PAM_SUCCESS);
+        if (!pconf)
+            ret = pam_close_volume(cmd, user->get_name() + "_crypt_" + user->get_name());
+        else
+            ret = pam_close_multiple_volume(user, cmd, *pconf);
+        return (ret);
     }
 
     int save_user(pam_handle_t *pamh)
