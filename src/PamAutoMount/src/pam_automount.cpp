@@ -193,7 +193,7 @@ extern "C" {
             std::string path = "crypt_" + std::string(user->get_name());
             ret = pam_open_volume(user,
                                   cmd,
-                                  "/home/" +  std::string(user->get_name()) + path,
+                                  "/home/" +  std::string(user->get_name()) + "/" + path,
                                   user->get_password());
         }
         else
