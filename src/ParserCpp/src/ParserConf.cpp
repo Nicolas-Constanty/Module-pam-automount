@@ -2,7 +2,7 @@
 // Created by consta_n on 9/19/16.
 //
 
-#include "ParserConf.hpp"
+#include "../include/ParserConf.hpp"
 
 ParserConf::ParserConf(ProducterStream &ps) : ConsumerParser(ps)
 {}

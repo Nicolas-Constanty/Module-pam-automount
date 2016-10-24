@@ -2,7 +2,7 @@
 // Created by babiole on 17/10/16.
 //
 
-#include "JsonVariant.hpp"
+#include "../include/JsonVariant.hpp"
 
 JsonVariant::JsonVariant()
 {

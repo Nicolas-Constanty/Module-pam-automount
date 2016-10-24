@@ -5,7 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
-#include "ProducterStream.hpp"
+#include "../include/ProducterStream.hpp"
 
 ProducterStream::ProducterStream() {
     _ifs = new std::ifstream();

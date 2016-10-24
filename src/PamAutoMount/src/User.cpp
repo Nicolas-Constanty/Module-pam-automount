@@ -2,7 +2,7 @@
 // Created by babiole on 09/10/16.
 //
 
-#include "User.hpp"
+#include "../include/User.hpp"
 
 User::User(const char *name, const char *password)
         : m_name(name), m_password(password)

@@ -4,7 +4,7 @@
 
 #include <stdexcept>
 #include <iostream>
-#include "ConsumerParser.hpp"
+#include "../include/ConsumerParser.hpp"
 
 ConsumerParser::ConsumerParser(ProducterStream &ps) : _ps(ps)
 {

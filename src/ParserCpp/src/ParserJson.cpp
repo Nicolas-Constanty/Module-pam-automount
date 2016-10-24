@@ -2,7 +2,7 @@
 // Created by consta_n on 9/19/16.
 //
 
-#include "ParserJson.hpp"
+#include "../include/ParserJson.hpp"
 
 ParserJson::ParserJson(ProducterStream &ps) : ConsumerParser(ps)
 {

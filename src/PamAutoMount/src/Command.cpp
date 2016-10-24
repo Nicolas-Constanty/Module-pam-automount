@@ -4,7 +4,7 @@
 
 #include <unistd.h>
 #include <stdlib.h>
-#include "Command.hpp"
+#include "../include/Command.hpp"
 
 
 Command::Command() {

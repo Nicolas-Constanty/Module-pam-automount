@@ -15,10 +15,10 @@
 //TODO verifier mdp different de nom User
 
 
-#include "Command.hpp"
-#include "User.hpp"
-#include "LibCpp/ParserCpp/IParser.hpp"
-#include "LibCpp/ParserCpp/Parser.hpp"
+#include "../include/Command.hpp"
+#include "../include/User.hpp"
+#include "../../ParserCpp/include/IParser.hpp"
+#include "../../ParserCpp/include/Parser.hpp"
 
 #define  UNUSED __attribute__((unused))
 
