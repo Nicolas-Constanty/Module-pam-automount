@@ -5,4 +5,5 @@
 *.so
 *.txt
 .*
-*.log
+config.log
+autom4te.cache

@@ -6,7 +6,7 @@ AC_INIT([pam_automount], [1.0], [nicolas.constanty@epitech.eu])
 LT_INIT([shared])
 AM_INIT_AUTOMAKE([subdir-objects])
 AC_CONFIG_SUBDIRS([src/PamAutoMount src/ParserCpp])
-AC_PREFIX_DEFAULT (/usr)
+AC_PROG_LN_S
 
 # Checks for programs.
 AC_PROG_CXX
