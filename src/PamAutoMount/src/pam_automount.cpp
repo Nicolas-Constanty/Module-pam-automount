@@ -112,9 +112,9 @@ extern "C" {
         {
             return (PAM_SUCCESS);
         }
+        std::cout << path << std::endl;
         if (!cmd.init_cryptsetup(path))
             return (PAM_SESSION_ERR);
-
         std::string np = path;
         np.substr(0, 6 + strlen(user->get_name()));
         np.replace(np.begin(), np.end(), '/', '_');
