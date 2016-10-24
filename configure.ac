@@ -14,7 +14,7 @@ AC_PROG_INSTALL
 # Checks for libraries.
 
 # Checks for header files.
-AC_CHECK_HEADERS([fcntl.h malloc.h stdlib.h sys/ioctl.h sys/mount.h unistd.h])
+AC_CHECK_HEADERS([fcntl.h malloc.h stdlib.h sys/ioctl.h sys/mount.h unistd.h libcrypsetup.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
