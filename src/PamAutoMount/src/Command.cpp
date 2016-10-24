@@ -47,13 +47,13 @@ bool Command::load()
     return (true);
 }
 
-bool Command::activate_by_passphrase(const std::string &device_name, const char *password)
+bool Command::activate_by_passphrase(const std::string &device_name, const std::string &password)
 {
     int r;
     r = crypt_activate_by_passphrase(_cd,
                                      device_name.c_str(),
                                      CRYPT_ANY_SLOT,
-                                     password, strlen(password),
+                                     password.c_str(), password.size(),
                                      CRYPT_ACTIVATE_ALLOW_DISCARDS);
     if (r < 0 && r != -EEXIST) {
         display_err("Device " + device_name + " activation failed err " + strerror(r));
@@ -74,7 +74,7 @@ Command::~Command()
         free(_loopname);
 }
 
-bool Command::luksOpen(const std::string &device_name, const char *password)
+bool Command::luksOpen(const std::string &device_name, const std::string &password)
 {
     if (_cd == NULL)
     {

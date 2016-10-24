@@ -6,4 +6,6 @@
 *.txt
 .*
 config.log
+*.lo
+*.la
 autom4te.cache

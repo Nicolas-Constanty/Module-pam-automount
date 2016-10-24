@@ -36,7 +36,7 @@ public:
 public:
     bool init_cryptsetup();
     bool init_cryptsetup(const std::string &filename);
-    bool luksOpen(const std::string &device_name, const char *password);
+    bool luksOpen(const std::string &device_name, const std::string &password);
     bool luksClose(const std::string &filename);
 
     // Public Mount functions
@@ -53,7 +53,7 @@ private:
     // CryptSetup functions
 private:
     bool load();
-    bool activate_by_passphrase(const std::string &device_name, const char *password);
+    bool activate_by_passphrase(const std::string &device_name, const std::string &password);
 
     // Util functions
 private:
