@@ -14,7 +14,7 @@
 //TODO changer volume_ par une macro generique
 //TODO verifier mdp different de nom User
 
-
+#include <algorithm>
 #include "../include/Command.hpp"
 #include "../include/User.hpp"
 #include "../../ParserCpp/include/IParser.hpp"
@@ -112,15 +112,14 @@ extern "C" {
         {
             return (PAM_SUCCESS);
         }
-        std::cout << path << std::endl;
         if (!cmd.init_cryptsetup(path))
             return (PAM_SESSION_ERR);
         std::string np = path;
         np.substr(0, 6 + strlen(user->get_name()));
-        np.replace(np.begin(), np.end(), '/', '_');
-        if (!cmd.luksOpen(np, pass))
+        std::replace(np.begin(), np.end(), '/', '_');
+        if (!cmd.luksOpen("/dev/mapper/volume" + np, pass))
             return (PAM_SESSION_ERR);
-        if (!cmd.mount_volume("/dev/mapper/volume_" + np, "/mnt/decrypt_" + np, "ext4"))
+        if (!cmd.mount_volume("/dev/mapper/volume" + np, "/mnt/decrypt" + np, "ext4"))
             return (PAM_SESSION_ERR);
         return (PAM_SUCCESS);
     }
