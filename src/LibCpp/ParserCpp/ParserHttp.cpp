@@ -10,13 +10,13 @@ ParserHttp::ParserHttp(ProducterStream &ps) : ConsumerParser(ps)
 {}
 
 //Http ::= Header '\n' Body;
-bool ParserHttp::parse(map_parser *content)
+bool ParserHttp::parse(JsonVariant::json_pair *content)
 {
     return (readHeader(content) && readChar('\n') && readBody());
 }
 
 //Header ::=  CMD ' ' URI ' ' VERSION '\n' [HeaderList #flush ]*;
-bool ParserHttp::readHeader(map_parser *content)
+bool ParserHttp::readHeader(JsonVariant::json_pair *content)
 {
     //bool ret = readCMD();
     //std::cout << std::boolalpha << ret << std::endl;
@@ -54,7 +54,7 @@ bool ParserHttp::readVersion()
 }
 
 //HeaderList ::= HeaderName ':' data;
-bool ParserHttp::readHeaderList(map_parser *content)
+bool ParserHttp::readHeaderList(JsonVariant::json_pair *content)
 {
     return (repeater([this, content] () {
         bool ret = readHeaderName() && readChar(':');

@@ -6,37 +6,37 @@
 
 JsonVariant::JsonVariant()
 {
-    value = boost::variant<std::string, json_array *>();
+    value = nullptr;
 };
 
-boost::variant<std::string, json_array *> &JsonVariant::getValue()
+JsonVariant::bvariant &JsonVariant::getValue()
 {
     return value;
 };
-const boost::variant<std::string, json_array *> &JsonVariant::get() const
+const JsonVariant::bvariant &JsonVariant::get() const
 {
     return value;
 };
 
 
-json_array *JsonVariant::get_array() const
+JsonVariant::json_array *JsonVariant::get_array() const
 {
     return boost::get<json_array *>(value);
 };
 
-const std::string &JsonVariant::operator[](const std::string &key) const
+const std::string &JsonVariant::operator()() const
 {
     const std::string &s = boost::get<std::string>(value);
     return (s);
 }
 
-const json_pair &JsonVariant::operator[](int key) const
+std::map<std::string, JsonVariant> &JsonVariant::operator[](int key) const
 {
     try {
         json_array *a = boost::get<json_array *>(value);
         if (key >= a->size())
             throw JsonException("Out of Range");
-        json_pair *p = (*a)[key];
+        std::map<std::string, JsonVariant> *p = (*a)[key];
         return (*p);
     }
     catch (boost::exception const &e) {
@@ -44,3 +44,7 @@ const json_pair &JsonVariant::operator[](int key) const
     }
 }
 
+unsigned long JsonVariant::size() const
+{
+    return boost::get<json_array *>(value)->size();
+}

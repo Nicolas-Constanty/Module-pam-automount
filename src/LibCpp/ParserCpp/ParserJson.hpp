@@ -10,30 +10,26 @@
 #include "JsonVariant.hpp"
 #include "JsonException.hpp"
 
-typedef IParser::map_parser json_map;
 
 class ParserJson : public ConsumerParser, public AParser
 {
 public:
     ParserJson(ProducterStream &);
-    virtual bool parse(map_parser *content);
+    virtual bool parse(JsonVariant::json_pair *content);
 
 private:
     bool key;
 
 private:
-    bool save_key(json_map* json_node,  const std::string &context, bool ret);
-    bool save_value(json_map* json_node,  const std::string &context, bool ret, int index);
-    bool members(json_map* json_node, const std::string &context = "", int index = 0);
-    bool pair(json_map* json_node, const std::string &context = "", int index = 0);
-    bool value(json_map* json_node, const std::string &context = "", int index = 0);
-    bool array(json_map* json_node, const std::string &context = "", int index = 0);
-    bool elements(json_map* json_node, const std::string &context = "", int index = 0);
-    bool object(json_map* json_node, const std::string &context = "", int index = 0);
-    bool string(json_map* json_node, const std::string &context = "", int index = 0);
+    bool save_key(JsonVariant::json_pair* json_node,  const std::string &context, bool ret, int index);
+    bool save_value(JsonVariant::json_pair* json_node,  const std::string &context, bool ret, int index);
+    bool members(JsonVariant::json_pair* json_node, const std::string &context = "", int index = 0);
+    bool pair(JsonVariant::json_pair* json_node, const std::string &context = "", int index = 0);
+    bool value(JsonVariant::json_pair* json_node, const std::string &context = "", int index = 0);
+    bool array(JsonVariant::json_pair* json_node, const std::string &context = "", int index = 0);
+    bool elements(JsonVariant::json_pair* json_node, const std::string &context = "", int index = 0);
+    bool object(JsonVariant::json_pair* json_node, const std::string &context = "", int index = 0);
+    bool string(JsonVariant::json_pair* json_node, const std::string &context = "", int index = 0);
 };
-
-std::ostream& operator<<(std::ostream& out, const json_map* json);
-std::ostream& operator<<(std::ostream& out, const json_array* jsarray);
 
 #endif //PARSERJSON_H

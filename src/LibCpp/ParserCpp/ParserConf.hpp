@@ -11,10 +11,10 @@ class ParserConf : public ConsumerParser, public AParser
 {
 public:
     ParserConf(ProducterStream &);
-    virtual bool parse(map_parser *content);
+    virtual bool parse(JsonVariant::json_pair *content);
 
   private:
-    bool readValue(map_parser *content);
+    bool readValue(JsonVariant::json_pair *content);
     bool readKey();
 };
 

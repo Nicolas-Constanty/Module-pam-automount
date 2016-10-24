@@ -25,8 +25,12 @@ public:
     void init_Conf();
     void init_Http();
     void init_Json();
-    virtual bool parse(map_parser *content);
+    virtual bool parse(JsonVariant::json_pair *content);
 };
+
+std::ostream& operator<<(std::ostream& out, const JsonVariant &json);
+std::ostream& operator<<(std::ostream& out, const JsonVariant::json_pair* json);
+std::ostream& operator<<(std::ostream& out, const JsonVariant::json_array* jsarray);
 
 
 #endif //PARSER_H

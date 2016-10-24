@@ -4,8 +4,8 @@
 
 #include "User.hpp"
 
-User::User(const char *name, const char *password, const char * mount)
-        : m_name(name), m_password(password), m_mount_directory(mount)
+User::User(const char *name, const char *password)
+        : m_name(name), m_password(password)
 {}
 
 User::~User()
@@ -30,36 +30,11 @@ const char *User::get_password() const {
     return (m_password);
 }
 
-const std::vector<std::string> &User::get_encrypt_files() const {
-    return (m_encrypt_files);
-}
-
-const std::vector<std::string> &User::get_volume_files() const {
-    return (m_volume_files);
-}
-
-const char *User::get_mount_directory() const {
-    return (m_mount_directory);
-}
-
-
-// Setter
-void User::add_encrypt_file(const std::string &filename)
-{
-    m_encrypt_files.push_back(filename);
-}
-
-void User::add_volume_file(const std::string &filename)
-{
-    m_volume_files.push_back(filename);
-}
-
 std::ostream& operator<<(std::ostream& out, const User& user)
 {
     out << "Object User{" << std::endl
         << "\tName : " << user.get_name() << "," << std::endl
-        << "\tPassword : " << user.get_password() << "," << std::endl
-        << "\tMount directory : " << user.get_mount_directory() << std::endl
+        << "\tPassword : " << user.get_password() << std::endl
         << "}";
     return out;
 }
@@ -68,8 +43,7 @@ std::ostream& operator<<(std::ostream& out, const User* user)
 {
     out << "Object User{" << std::endl
         << "\tName : " << user->get_name() << "," << std::endl
-        << "\tPassword : " << user->get_password() << "," << std::endl
-        << "\tMount directory : " << user->get_mount_directory() << std::endl
+        << "\tPassword : " << user->get_password() << std::endl
         << "}";
     return out;
 }

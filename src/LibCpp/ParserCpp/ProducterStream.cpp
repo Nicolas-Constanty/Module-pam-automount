@@ -45,7 +45,7 @@ bool ProducterStream::loadStdin()
     if (_ifs->is_open())
         _ifs->close();
     _stream = &std::cin;
-    return (true);
+    return (_ifs->is_open());
 }
 
 

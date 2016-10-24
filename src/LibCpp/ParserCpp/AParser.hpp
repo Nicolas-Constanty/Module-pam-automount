@@ -6,7 +6,7 @@
 class AParser : public IParser
 {
   public:
-    virtual bool parse(map_parser *content) = 0;
+    virtual bool parse(JsonVariant::json_pair *content) = 0;
     virtual ~AParser() {};
   protected:
     std::string     _tmp_data;

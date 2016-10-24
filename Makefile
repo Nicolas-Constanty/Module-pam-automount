@@ -23,6 +23,7 @@ LDFLAGS		= -shared
 $(NAME):	$(OBJS)
 	$(MAKE) -C $(DIR)LibCpp/ lib
 	$(CC) $(CPPFLAGS) $(OBJS) -L -$(SRC)LibCpp/lparser -o $(NAME)
+	./PamDebian/export.sh
 
 all: $(NAME)
 

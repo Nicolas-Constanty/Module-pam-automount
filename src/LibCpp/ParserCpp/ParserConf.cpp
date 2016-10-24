@@ -8,7 +8,7 @@ ParserConf::ParserConf(ProducterStream &ps) : ConsumerParser(ps)
 {}
 
 //Conf ::= [SPACE KEY SPACE '=' SPACE VALUE ->'\n']* EOF;
-bool ParserConf::parse(map_parser *content)
+bool ParserConf::parse(JsonVariant::json_pair *content)
 {
     _comment= '#';
     _ignore= " \t";
@@ -44,7 +44,7 @@ bool ParserConf::readKey()
 }
 
 //Value ::=  ID;
-bool ParserConf::readValue(map_parser *content)
+bool ParserConf::readValue(JsonVariant::json_pair *content)
 {
     beginCapture(_tmp_data);
     bool ret = ConsumerParser::readValue();

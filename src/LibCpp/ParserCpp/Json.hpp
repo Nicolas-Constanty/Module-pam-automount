@@ -10,6 +10,5 @@
 #include <map>
 
 typedef std::map<std::string, std::string> json_pair;
-typedef std::vector<json_pair *>  json_array;
 
 #endif //PAMELA_JSON_HPP_H

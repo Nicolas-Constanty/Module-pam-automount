@@ -12,7 +12,7 @@ class ParserHttp : public ConsumerParser, public AParser
 {
 public:
     ParserHttp(ProducterStream &);
-    virtual bool parse(map_parser *content);
+    virtual bool parse(JsonVariant::json_pair *content);
 private:
     std::string     _tmp_data;
     bool readVersion();
@@ -21,8 +21,8 @@ private:
     bool readURI();
     bool readData();
     bool readBody();
-    bool readHeader(map_parser *content);
-    bool readHeaderList(map_parser *content);
+    bool readHeader(JsonVariant::json_pair *content);
+    bool readHeaderList(JsonVariant::json_pair *content);
 };
 
 

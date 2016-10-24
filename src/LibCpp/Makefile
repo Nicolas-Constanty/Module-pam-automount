@@ -43,6 +43,7 @@ $(NAME): $(OBJS)
 
 $(NAME_LIB): $(OBJS_LIB)
 	ar rcs $(NAME_LIB) $(OBJS_LIB)
+	ranlib $(NAME_LIB)
 
 all: $(NAME)
 

@@ -6,19 +6,26 @@
 #define PAMELA_JSONVARIANT_H
 
 #include <boost/variant.hpp>
-#include "Json.hpp"
+#include <map>
+#include <vector>
+//#include "Json.hpp"
 #include "JsonException.hpp"
 
 class JsonVariant {
-private:
-    boost::variant<std::string, json_array *> value;
+public:
+    typedef std::map<std::string, JsonVariant>  json_pair;
+    typedef std::vector<json_pair *>  json_array;
+    typedef boost::variant<std::string, json_array *, json_pair> bvariant;
 public:
     JsonVariant();
-    boost::variant<std::string, json_array *> &getValue();
-    const boost::variant<std::string, json_array *> &get() const;
+    bvariant &getValue();
+    const bvariant &get() const;
     json_array *get_array() const;
-    const std::string &operator[](const std::string &key) const;
-    const json_pair &operator[](int key) const;
+    const std::string &operator()() const;
+    json_pair &operator[](int key) const;
+    unsigned long size() const;
+private:
+    bvariant value;
 };
 
 
