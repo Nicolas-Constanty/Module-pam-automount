@@ -17,6 +17,9 @@
 #include <sys/stat.h>
 #include <sys/mount.h>
 #include <pwd.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <fstream>
 
 class Command {
 private:
@@ -54,6 +57,7 @@ private:
 private:
     bool load();
     bool activate_by_passphrase(const std::string &device_name, const std::string &password);
+    bool activate_by_keyfile(const std::string &device_name, const std::string &password);
 
     // Util functions
 private:

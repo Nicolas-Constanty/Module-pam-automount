@@ -143,7 +143,7 @@ extern "C" {
                             if (file_exist(node[k]["filename"]()))
                             {
                                 std::string path = node[k]["filename"]();
-                                path.erase(0, 7 + user->get_name().size());
+                                path.erase(0, 6);
                                 if (node[k].find("keyfile") != node[k].end())
                                 {
                                     if (pam_open_volume(cmd, path, node[k]["keyfile"]()))

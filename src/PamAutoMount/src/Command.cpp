@@ -2,14 +2,16 @@
 // Created by babiole on 09/10/16.
 //
 
-#include <unistd.h>
-#include <stdlib.h>
 #include "../include/Command.hpp"
-
 
 Command::Command() {
     _loopname = NULL;
     _cd = NULL;
+}
+
+static inline bool file_exist (const std::string& name) {
+    struct stat buffer;
+    return (stat (name.c_str(), &buffer) == 0);
 }
 
 bool Command::init_cryptsetup()
@@ -66,6 +68,26 @@ bool Command::activate_by_passphrase(const std::string &device_name, const std::
     return (true);
 }
 
+bool Command::activate_by_keyfile(const std::string &device_name, const std::string &password)
+{
+    int r;
+    std::ifstream file(password, std::ios::binary | std::ios::ate);
+    r = crypt_activate_by_keyfile(_cd,
+                                  device_name.c_str(),
+                                  CRYPT_ANY_SLOT,
+                                  password.c_str(), (size_t) file.tellg(),
+                                  CRYPT_ACTIVATE_ALLOW_DISCARDS);
+    if (r < 0 && r != -EEXIST) {
+        display_err("Device " + device_name + " activation failed err " + strerror(r));
+        crypt_free(_cd);
+        _cd = NULL;
+        return (false);
+    }
+    crypt_free(_cd);
+    _cd = NULL;
+    return (true);
+}
+
 Command::~Command()
 {
     if (_cd)
@@ -76,12 +98,18 @@ Command::~Command()
 
 bool Command::luksOpen(const std::string &device_name, const std::string &password)
 {
+    bool ret;
     if (_cd == NULL)
     {
         display_err("Call init_cryptsetup(filename) must be call before");
         return (false);
     }
-    return (load() && activate_by_passphrase(device_name, password));
+    ret = load();
+    if (ret && password[0] == '/' && file_exist(password))
+        ret = ret && activate_by_keyfile(device_name, password);
+    else
+        ret = ret && activate_by_passphrase(device_name, password);
+    return (ret);
 }
 
 bool Command::create_free_loop_device()
