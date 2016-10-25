@@ -229,7 +229,7 @@ extern "C" {
                         if (node[k].find("filename") != node[k].end())
                         {
                             std::string path = node[k]["filename"]();
-                            path.erase(0, 7 + user->get_name().size());
+                            path.erase(0, 6);
                             if (pam_close_volume(cmd, path))
                                 ret = PAM_SUCCESS;
                         }
