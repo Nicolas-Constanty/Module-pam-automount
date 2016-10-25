@@ -125,8 +125,6 @@ bool Command::create_free_loop_device()
         display_err("Failed open: /dev/loop-control");
         return (false);
     }
-
-    // Setup information
     dev_nbr = ioctl(ctrl_loop, LOOP_CTL_GET_FREE);
     if (dev_nbr == -1)
     {
@@ -135,7 +133,6 @@ bool Command::create_free_loop_device()
         return (false);
     }
     _loopname = strdup(std::string("/dev/loop" + std::to_string(dev_nbr)).c_str());
-    std::cout << "loopname = " << _loopname << std::endl;
     return (true);
 }
 
@@ -144,15 +141,12 @@ bool  Command::associate_loop_device(const std::string &filename)
     int container_fd;
     int loopfd;
 
-    // Open container
-    std::cout << "Container : " << filename << std::endl;
     container_fd = open(filename.c_str(), O_RDWR);
     if (container_fd == -1)
     {
         display_err("init_loop_device : Failed to open " + filename);
         return (false);
     }
-    // Open free loop device
     loopfd = open(_loopname, O_RDWR);
     if (loopfd == -1)
     {
@@ -160,7 +154,6 @@ bool  Command::associate_loop_device(const std::string &filename)
         close(container_fd);
         return (false);
     }
-    // Attach loop device with container
     if (ioctl(loopfd, LOOP_SET_FD, container_fd) == -1)
     {
         display_err("Failed to set loop device information : ioctl-LOOP_SET_FD");

@@ -10,18 +10,8 @@ User::User(const char *name, const char *password)
 
 User::~User()
 {
-//    if (m_name)
-//        free((char *)m_name);
-//    if (m_password)
-//    {
-//        memset((char *)m_password, 0, strlen(m_password));
-//        free((char *)m_password);
-//    }
-//    if (m_mount_directory)
-//        free((char *)m_mount_directory);
 }
 
-// Getter
 const std::string &User::get_name() const {
     return (m_name);
 }

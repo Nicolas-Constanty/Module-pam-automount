@@ -75,14 +75,13 @@ extern "C" {
             if (pe->pw_passwd)
                 *authtok = strdup(pe->pw_passwd);
         }
-        std::cout << "PASS=" << *authtok << "!" << std::endl;
         if (*authtok != NULL)
         {
             ret = pam_set_data(pamh, "pam_automount_authtok", (void *)(*authtok), clean_authtok);
             if (ret == PAM_SUCCESS)
             {
                 if (mlock(authtok, strlen(*authtok) + 1) < 0)
-                    std::cout << "Error mlock" << std::endl;
+                    std::cerr << "Error mlock" << std::endl;
             }
         }
         return (ret);
@@ -90,19 +89,16 @@ extern "C" {
 
     PAM_EXTERN int pam_sm_chauthtok(UNUSED pam_handle_t *pamh, UNUSED int flags, UNUSED int argc, UNUSED const char **argv)
     {
-        std::cout << "pam_sm_chauthtok" << std::endl;
         return PAM_SUCCESS;
     }
 
     PAM_EXTERN int pam_sm_setcred(UNUSED pam_handle_t *pamh, UNUSED int flags, UNUSED int argc, UNUSED const char **argv)
     {
-        std::cout << "pam_sm_setcred" << std::endl;
         return PAM_SUCCESS;
     }
 
     PAM_EXTERN int pam_sm_acct_mgmt(UNUSED pam_handle_t *pamh, UNUSED int flags, UNUSED int argc, UNUSED const char **argv)
     {
-        std::cout << "pam_sm_acct_mgmt" << std::endl;
         return PAM_SUCCESS;
     }
 
@@ -171,7 +167,6 @@ extern "C" {
     PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, UNUSED int flags,
                                        UNUSED int ac, UNUSED const char **av)
     {
-        std::cout << "pam_sm_open_session" << std::endl;
         int ret;
         User *user;
         JsonVariant::json_pair *pconf;
@@ -255,12 +250,10 @@ extern "C" {
         JsonVariant::json_pair *pconf;
 
         user = NULL;
-        std::cout << "pam_sm_close_session" << std::endl;
         if (pam_get_data(pamh, "pam_automount_user", (const void **)&user) != PAM_SUCCESS)
         {
             return (PAM_SESSION_ERR);
         }
-        std::cout << "USER" << std::endl;
         if (user == NULL)
         {
             std::cerr << "user not found" << std::endl;
@@ -312,7 +305,6 @@ extern "C" {
     PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, UNUSED int flgs,
                                        UNUSED int ac, UNUSED const char **av )
     {
-        std::cout << "pam_sm_authenticate" << std::endl;
         if (save_user(pamh) != PAM_SUCCESS)
             return PAM_AUTH_ERR;
         try {
