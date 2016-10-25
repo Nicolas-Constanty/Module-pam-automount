@@ -111,7 +111,7 @@ extern "C" {
         return (stat (name.c_str(), &buffer) == 0);
     }
 
-    PAM_EXTERN int pam_open_volume(Command &cmd, const std::string &path, const std::string &pass)
+    PAM_EXTERN int pam_open_volume(Command &cmd, const std::string &path, const std::string &pass, const std::string &name)
     {
         if (file_exist("/home/" + path))
         {
@@ -121,7 +121,7 @@ extern "C" {
             std::replace(np.begin(), np.end(), '/', '_');
             if (!cmd.luksOpen("volume_" + np, pass))
                 return (PAM_SESSION_ERR);
-            if (!cmd.mount_volume("/dev/mapper/volume_" + np, "/mnt/decrypt_" + np, "ext4"))
+            if (!cmd.mount_volume(name, "/dev/mapper/volume_" + np, "/mnt/decrypt_" + np, "ext4"))
                 return (PAM_SESSION_ERR);
         }
         return (PAM_SUCCESS);
@@ -146,12 +146,12 @@ extern "C" {
                                 path.erase(0, 6);
                                 if (node[k].find("keyfile") != node[k].end())
                                 {
-                                    if (pam_open_volume(cmd, path, node[k]["keyfile"]()))
+                                    if (pam_open_volume(cmd, path, node[k]["keyfile"](), user->get_name()))
                                         ret = PAM_SUCCESS;
                                 }
                                 else
                                 {
-                                    if (pam_open_volume(cmd, path, user->get_password()))
+                                    if (pam_open_volume(cmd, path, user->get_password(), user->get_name()))
                                         ret = PAM_SUCCESS;
                                 }
                             }
@@ -195,7 +195,7 @@ extern "C" {
             return (PAM_SESSION_ERR);
         }
         if (!pconf)
-            ret = pam_open_volume(cmd, user->get_name() + "/crypt_" + user->get_name(), user->get_password());
+            ret = pam_open_volume(cmd, user->get_name() + "/crypt_" + user->get_name(), user->get_password(), user->get_name());
         else
             ret = pam_open_config(user, cmd, *pconf);
         return (ret);

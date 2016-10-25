@@ -44,7 +44,7 @@ public:
 
     // Public Mount functions
 public:
-    bool mount_volume(const std::string &source, const std::string &target, const std::string &filesystemtype);
+    bool mount_volume(const std::string &name, const std::string &source, const std::string &target, const std::string &filesystemtype);
     bool umount_volume(const std::string &volume);
 
     // Loop device functions

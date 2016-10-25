@@ -2,6 +2,7 @@
 // Created by babiole on 09/10/16.
 //
 
+#include <stdlib.h>
 #include "../include/Command.hpp"
 
 Command::Command() {
@@ -201,14 +202,17 @@ bool Command::detach_loop_device()
     return (true);
 }
 
-bool Command::mount_volume(const std::string &source, const std::string &target, const std::string &filesystemtype)
+bool Command::mount_volume(const std::string &name, const std::string &source, const std::string &target, const std::string &filesystemtype)
 {
+    struct passwd *pwd;
+    uid_t uid;
+
     if (mkdir(target.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) < 0 && errno != EEXIST)
     {
         display_err("mkdir : " + std::string(strerror(errno)));
         return (false);
     }
-    std::string fsys_cmd = "mkfs.ext4 -j " + source;
+    std::string fsys_cmd = "mkfs.ext4 -F -j " + source;
     if (system(fsys_cmd.c_str()) == -1)
     {
         display_err("mkfs failled");
@@ -217,6 +221,16 @@ bool Command::mount_volume(const std::string &source, const std::string &target,
     if (mount(source.c_str(), target.c_str(), filesystemtype.c_str(), 0, NULL) < 0)
     {
         display_err("mount : " + std::string(strerror(errno)));
+        return (false);
+    }
+    pwd = getpwnam(name.c_str());
+    if (pwd == NULL) {
+        display_err("getpwnam : " + std::string(strerror(errno)));
+        return (false);
+    }
+    if (chown(target.c_str(), pwd->pw_uid, pwd->pw_gid) < 0)
+    {
+        display_err("chown : " + std::string(strerror(errno)));
         return (false);
     }
     return (true);
