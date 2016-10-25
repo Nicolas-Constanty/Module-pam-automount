@@ -26,7 +26,6 @@ apt-get install -y -q libtool
 
 apt-get install -y -q libboost-dev
 
-
 git clone https://github.com/Nicolas-Constanty/Module-pam-automount.git
 
 cd Module-pam-automount
@@ -36,5 +35,11 @@ cd Module-pam-automount
 make
 
 make install
+
+echo "session optional			pam_automount.so" >> /etc/pam.d/common-session
+
+echo "auth optional             pam_automount.so  use_first_pass" >> /etc/pam.d/common-auth
+
+ln -s /usr/lib/libpam_automount.so /lib/x86_64-linux-gnu/security/pam_automount.so
 
 exit
