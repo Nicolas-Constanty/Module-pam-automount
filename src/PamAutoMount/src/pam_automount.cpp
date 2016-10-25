@@ -203,12 +203,13 @@ extern "C" {
 
     PAM_EXTERN int pam_close_volume(Command &cmd, const std::string &path)
     {
-        ;
-        if (!cmd.umount_volume("/mnt/decrypt_" +  path))
+        std::string np = path;
+        std::replace(np.begin(), np.end(), '/', '_');
+        if (!cmd.umount_volume("/mnt/decrypt_" +  np))
         {
             return (PAM_SESSION_ERR);
         }
-        if (!cmd.luksClose("volume_" + path))
+        if (!cmd.luksClose("volume_" + np))
         {
             return (PAM_SESSION_ERR);
         }
