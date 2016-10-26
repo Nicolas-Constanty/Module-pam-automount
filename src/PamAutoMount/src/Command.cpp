@@ -292,7 +292,7 @@ bool Command::create_file(const std::string &filename, const std::string  &size)
 
 bool Command::create_file(const std::string &filename, const std::string &size, const std::string &mode)
 {
-    system(std::string("dd if=/dev/" + mode + "of=" + filename + " bs=1M count=" + size).c_str());
+    system(std::string("dd if=/dev/" + mode + " of=" + filename + " bs=1M count=" + size).c_str());
     system(std::string("cryptsetup -y luksFormat " + filename).c_str());
     return true;
 }
@@ -322,7 +322,7 @@ bool Command::create_file(std::map<std::string, JsonVariant> &node)
 
 bool Command::create_file_keyfile(const std::string &filename, const std::string &keyfile)
 {
-    system(std::string("dd if=/dev/zero of=" + filename + " bs=1M count 128").c_str());
+    system(std::string("dd if=/dev/zero of=" + filename + " bs=1M count=128").c_str());
     system(std::string("cryptsetup --verbose --cipher \"aes-cbc-essiv:sha256\" --key-size 256 --verify-passphrase luksFormat " + filename).c_str());
     system(std::string("cryptsetup luksDump " + filename).c_str());
     system(std::string("dd if=/dev/random of=" + keyfile + " bs=1 count=32").c_str());
