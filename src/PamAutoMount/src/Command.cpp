@@ -278,21 +278,21 @@ bool Command::luksClose(const std::string &device_name)
 
 bool Command::create_file(const std::string &filename)
 {
-    system(std::string("dd if=/dev/zero of=" + filename + "bs=1M count=128").c_str());
+    system(std::string("dd if=/dev/zero of=" + filename + " bs=1M count=128").c_str());
     system(std::string("cryptsetup -y luksFormat " + filename).c_str());
     return true;
 }
 
 bool Command::create_file(const std::string &filename, const std::string  &size)
 {
-    system(std::string("dd if=/dev/zero of=" + filename + "bs=1M count=" + size).c_str());
+    system(std::string("dd if=/dev/zero of=" + filename + " bs=1M count=" + size).c_str());
     system(std::string("cryptsetup -y luksFormat " + filename).c_str());
     return true;
 }
 
 bool Command::create_file(const std::string &filename, const std::string &size, const std::string &mode)
 {
-    system(std::string("dd if=/dev/" + mode + "of=" + filename + "bs=1M count=" + size).c_str());
+    system(std::string("dd if=/dev/" + mode + "of=" + filename + " bs=1M count=" + size).c_str());
     system(std::string("cryptsetup -y luksFormat " + filename).c_str());
     return true;
 }
