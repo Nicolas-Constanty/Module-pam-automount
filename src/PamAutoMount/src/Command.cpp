@@ -275,3 +275,79 @@ bool Command::luksClose(const std::string &device_name)
     _cd = NULL;
     return (true);
 }
+
+bool Command::create_file(const std::string &filename)
+{
+    system(std::string("dd if=/dev/zero of=" + filename + "bs=1M count=128").c_str());
+    system(std::string("cryptsetup -y luksFormat " + filename).c_str());
+    return true;
+}
+
+bool Command::create_file(const std::string &filename, const std::string  &size)
+{
+    system(std::string("dd if=/dev/zero of=" + filename + "bs=1M count=" + size).c_str());
+    system(std::string("cryptsetup -y luksFormat " + filename).c_str());
+    return true;
+}
+
+bool Command::create_file(const std::string &filename, const std::string &size, const std::string &mode)
+{
+    system(std::string("dd if=/dev/" + mode + "of=" + filename + "bs=1M count=" + size).c_str());
+    system(std::string("cryptsetup -y luksFormat " + filename).c_str());
+    return true;
+}
+
+bool Command::create_file(std::map<std::string, JsonVariant> &node)
+{
+    if (node.find("keyfile") != node.end())
+    {
+        if (node.find("size") != node.end() && node.find("mode") != node.end())
+            this->create_file_keyfile(node["filename"](), node["keyfile"](), node["size"](), node["mode"]());
+        else if (node.find("size") != node.end())
+            this->create_file_keyfile(node["filename"](), node["keyfile"](), node["size"]());
+        else
+            this->create_file_keyfile(node["filename"](), node["keyfile"]());
+    }
+    else
+    {
+        if (node.find("size") != node.end() && node.find("mode") != node.end())
+            this->create_file(node["filename"](), node["size"](), node["mode"]());
+        else if (node.find("size") != node.end())
+            this->create_file(node["filename"](), node["size"]());
+        else
+            this->create_file(node["filename"]());
+    }
+    return false;
+}
+
+bool Command::create_file_keyfile(const std::string &filename, const std::string &keyfile)
+{
+    system(std::string("dd if=/dev/zero of=" + filename + " bs=1M count 128").c_str());
+    system(std::string("cryptsetup --verbose --cipher \"aes-cbc-essiv:sha256\" --key-size 256 --verify-passphrase luksFormat " + filename).c_str());
+    system(std::string("cryptsetup luksDump " + filename).c_str());
+    system(std::string("dd if=/dev/random of=" + keyfile + " bs=1 count=32").c_str());
+    system(std::string("cryptsetup luksAddKey " + filename + " " + keyfile).c_str());
+    return true;
+}
+
+bool Command::create_file_keyfile(const std::string &filename, const std::string &keyfile, const std::string &size)
+{
+    system(std::string("dd if=/dev/zero of=" + filename + " bs=1M count=" + size).c_str());
+    system(std::string("cryptsetup --verbose --cipher \"aes-cbc-essiv:sha256\" --key-size 256 --verify-passphrase luksFormat " + filename).c_str());
+    system(std::string("cryptsetup luksDump " + filename).c_str());
+    system(std::string("dd if=/dev/random of=" + keyfile + " bs=1 count=32").c_str());
+    system(std::string("cryptsetup luksAddKey " + filename + " " + keyfile).c_str());
+    return true;
+}
+
+bool Command::create_file_keyfile(const std::string &filename, const std::string &keyfile, const std::string &size,
+                                  const std::string &mode)
+{
+
+    system(std::string("dd if=/dev/" + mode + " of=" + filename + " bs=1M count=" + size).c_str());
+    system(std::string("cryptsetup --verbose --cipher \"aes-cbc-essiv:sha256\" --key-size 256 --verify-passphrase luksFormat " + filename).c_str());
+    system(std::string("cryptsetup luksDump " + filename).c_str());
+    system(std::string("dd if=/dev/random of=" + keyfile + " bs=1 count=32").c_str());
+    system(std::string("cryptsetup luksAddKey " + filename + " " + keyfile).c_str());
+    return false;
+}

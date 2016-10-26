@@ -136,20 +136,19 @@ extern "C" {
                     for (unsigned long k = 0; k < node.size(); ++k) {
                         if (node[k].find("filename") != node[k].end())
                         {
-                            if (file_exist(node[k]["filename"]()))
+                            if (!file_exist(node[k]["filename"]()))
+                                cmd.create_file(node[k]);
+                            std::string path = node[k]["filename"]();
+                            path.erase(0, 6);
+                            if (node[k].find("keyfile") != node[k].end())
                             {
-                                std::string path = node[k]["filename"]();
-                                path.erase(0, 6);
-                                if (node[k].find("keyfile") != node[k].end())
-                                {
-                                    if (pam_open_volume(cmd, path, node[k]["keyfile"](), user->get_name()))
-                                        ret = PAM_SUCCESS;
-                                }
-                                else
-                                {
-                                    if (pam_open_volume(cmd, path, user->get_password(), user->get_name()))
-                                        ret = PAM_SUCCESS;
-                                }
+                                if (pam_open_volume(cmd, path, node[k]["keyfile"](), user->get_name()))
+                                    ret = PAM_SUCCESS;
+                            }
+                            else
+                            {
+                                if (pam_open_volume(cmd, path, user->get_password(), user->get_name()))
+                                    ret = PAM_SUCCESS;
                             }
                         }
                     }
@@ -224,10 +223,13 @@ extern "C" {
                     for (unsigned long k = 0; k < node.size(); ++k) {
                         if (node[k].find("filename") != node[k].end())
                         {
-                            std::string path = node[k]["filename"]();
-                            path.erase(0, 6);
-                            if (pam_close_volume(cmd, path))
-                                ret = PAM_SUCCESS;
+                            if (file_exist(node[k]["filename"]()))
+                            {
+                                std::string path = node[k]["filename"]();
+                                path.erase(0, 6);
+                                if (pam_close_volume(cmd, path))
+                                    ret = PAM_SUCCESS;
+                            }
                         }
                     }
                 }
