@@ -292,7 +292,6 @@ bool Command::create_file(const std::string &filename, const std::string  &size)
 
 bool Command::create_file(const std::string &filename, const std::string &size, const std::string &mode)
 {
-    std::cout << "dd if=/dev/" + mode + " of=" + filename + " bs=1M count=" + size << std::endl;
     system(std::string("dd if=/dev/" + mode + " of=" + filename + " bs=1M count=" + size).c_str());
     system(std::string("cryptsetup -y luksFormat " + filename).c_str());
     return true;
